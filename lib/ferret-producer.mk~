@@ -1,0 +1,9 @@
+#
+# Back end
+#
+SRC_CC = create.cc scalar_init.c list_init.c list_producer.c
+
+#
+# Shared library
+#
+SHARED_LIB  = yes

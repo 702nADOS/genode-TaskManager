@@ -1,0 +1,61 @@
+#include <dataspace/client.h>
+#include <stdint.h>
+
+
+
+namespace Ferret
+{
+/*class Sensor
+	{
+		public:
+			uint16_t major() const     { return _major; }
+			uint16_t minor() const     { return _minor; }
+			uint16_t instance() const  { return _instance; }
+			uint16_t type() const      { return _type; }
+			unsigned int refcount()    { return _refcount; }
+			void inc() { ++_refcount; }
+			void dec() { --_refcount; }
+
+			uint32_t elem_size() const { return _elemsize; }
+			void elem_size(uint32_t v) { _elemsize = v; }
+			uint32_t num_elem() const  { return _num_elem; }
+			void num_elem(uint32_t v)  { _num_elem = v; }
+
+			Genode::Dataspace_capability ds_cap() { return _dataspace; }
+
+			Sensor(uint16_t const major, uint16_t const minor,
+			       uint16_t const instance, uint16_t const type,
+			       uint32_t e_size, uint32_t e_num);
+
+			~Sensor()
+			{
+			}
+
+		private:
+			unsigned int             _refcount;*/ /**< reference count */
+			//uint16_t                 _major;    /**< major number */
+			//uint16_t                 _minor;    /**< minor number */
+			//uint16_t                 _instance; /**< instance number */
+			//uint16_t                 _type;     /**< sensor type */
+			//uint32_t                 _elemsize; /**< size of a list element XXX -> subclass! */
+			//uint32_t                 _num_elem; /**< number of list elements XXX -> subclass! */
+			//Genode::Dataspace_capability _dataspace; /**< cap to sensor data space */
+
+			//Genode::Dataspace_capability get_dataspace(size_t bytes);
+	//};
+
+class SensorRegistry
+	{
+		public:
+			SensorRegistry();
+			void register_sensor(Sensor *r);
+			void unregister_sensor(Sensor *r);
+			Sensor *lookup(uint16_t const major, uint16_t const minor, uint16_t const instance) const;
+
+		private:
+			Genode::List<Genode::List_element<Ferret::Sensor*>> _sensors;
+	};
+
+}
+
+

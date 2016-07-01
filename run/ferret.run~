@@ -1,0 +1,81 @@
+#
+# Build
+#
+
+set build_components {
+	core init
+	drivers/timer
+	ferret
+	lib/trace/policy/rpc_name
+}
+
+build $build_components
+
+create_boot_directory
+
+#
+# Generate config
+#
+
+append config {
+<config>
+	<parent-provides>
+		<service name="ROM"/>
+		<service name="RAM"/>
+		<service name="IRQ"/>
+		<service name="IO_MEM"/>
+		<service name="IO_PORT"/>
+		<service name="CAP"/>
+		<service name="PD"/>
+		<service name="RM"/>
+		<service name="CPU"/>
+		<service name="LOG"/>
+		<service name="SIGNAL"/>
+		<service name="TRACE"/>
+	</parent-provides>
+	<default-route>
+		<any-service> <parent/> <any-child/> </any-service>
+	</default-route>
+	<start name="timer">
+		<resource name="RAM" quantum="1M"/>
+		<provides><service name="Timer"/></provides>
+	</start>
+	<start name="sensordir">
+		<resource name="RAM" quantum="30M"/>
+		<provides><service name="Sensordir"/></provides>
+	</start>
+	<start name="scalardemo">
+		<resource name="RAM" quantum="2M"/>
+	</start>
+	<start name="scalarmonitor">
+		<resource name="RAM" quantum="2M"/>
+	</start>
+</config>}
+
+install_config $config
+
+#
+# Boot modules
+#
+
+# generic modules
+set boot_modules {
+	core init
+	timer
+	sensordir
+	scalardemo
+	scalarmonitor
+	ld.lib.so
+	libc.lib.so
+	libm.lib.so
+	stdcxx.lib.so
+	ferret-producer.lib.so
+	ferret-consumer.lib.so
+}
+
+build_boot_image $boot_modules
+
+append qemu_args " -nographic -serial mon:stdio -m 1024 "
+
+run_genode_until forever
+#{.*child exited with exit value 0.* } 60

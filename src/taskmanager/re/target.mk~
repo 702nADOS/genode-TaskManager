@@ -1,0 +1,3 @@
+TARGET = dummy
+SRC_CC += dummy.cc
+LIBS += base stdcxx

@@ -1,0 +1,27 @@
+#include <dataspace/client.h>
+
+
+static int _ferret_create_sensor(l4_cap_idx_t dir_cap,
+                                 uint16_t major, uint16_t minor,
+                                 uint16_t instance, uint16_t type,
+                                 uint32_t flags, const char * config,
+                                 void ** addr, void *(*alloc)(size_t s))
+{
+
+    Genode::Dataspace_capability ds = Genode::env()->ram_session()->alloc(s);
+	
+	Ferret::Connection f;
+
+	f.dispatch_client(0, major, minor, instance, type, flags);
+
+		ferret_common_t *_head =  Genode::env()->rm_session()->attach(ds);
+
+		_head->major    = major;
+		_head->minor    = minor;
+		_head->instance = instance;
+		_head->type     = type;
+		_head->ds_cap   = ds.cap();
+		_head->ds_size  = ds->size();
+
+	return 0;
+}

@@ -1,0 +1,86 @@
+#include <types.h>
+#include <sensors/scalar.h>
+#include <dataspace/client.h>
+#include "sensor.h"
+#include <stdint.h>
+#include <base/env.h>
+#include "sensordir.h"
+
+
+/******************************************************************************
+ *                                                                            *
+ * Sensor                                                                     *
+ *                                                                            *
+ ******************************************************************************/
+Ferret::Sensor::Sensor(uint16_t const major, uint16_t const minor,
+                       uint16_t const instance, uint16_t const type,
+					   uint32_t e_size = 0, uint32_t e_num = 0)
+	: _refcount(0), _major(major), _minor(minor), _instance(instance),
+      _type(type), _elemsize(e_size), _num_elem(e_num)
+{
+	unsigned space_req = 0;
+
+	switch(type)
+	{
+		case FERRET_SCALAR:
+			space_req = sizeof(ferret_scalar_t);
+			break;
+	}
+
+	_dataspace = Root_component::get_dataspace(space_req);
+}
+
+
+
+
+/******************************************************************************
+ *                                                                            *
+ * SensorRegistry                                                             *
+ *                                                                            *
+ ******************************************************************************/
+Ferret::SensorRegistry::SensorRegistry()
+	: _sensors()
+{
+}
+
+
+void Ferret::SensorRegistry::register_sensor(Ferret::Sensor *s)
+{
+	Genode::printf("Register Sensor1\n");
+	Genode::List_element<Ferret::Sensor*> sensor(&s);
+	_sensors.insert(&sensor);
+	Genode::printf("Register Sensor2\n");
+}
+
+
+void Ferret::SensorRegistry::unregister_sensor(Ferret::Sensor *s)
+{
+	Genode::List_element<Ferret::Sensor*> sensor(&s);
+	_sensors.remove(&sensor);
+}
+
+
+Ferret::Sensor *Ferret::SensorRegistry::lookup(uint16_t const major,
+                                               uint16_t const minor,
+                                               uint16_t const instance) const
+{
+	Genode::List_element<Ferret::Sensor*> f=*_sensors.first();
+	Ferret::Sensor *s = *f.object();
+	/*if(!f.next()) {
+		Genode::printf("Only one Element\n");
+		return s;
+	}
+	while(!(major==s->major()&&minor==s->minor()&&instance==s->instance())) {
+		if(!f.next()) {
+			Genode::printf("Sensor not found yet\n");
+			f=*f.next();
+		} else {
+			Genode::printf("Sensor not found in reg\n");
+			return 0;
+		}
+	}*/
+	Genode::printf("Sensor found in reg\n");
+	return s;
+}
+
+

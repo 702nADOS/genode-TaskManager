@@ -1,0 +1,7 @@
+namespace Ferret {
+class Root_component
+	{
+		public:
+			Genode::Dataspace_capability get_dataspace(size_t const bytes);
+	}
+}
