@@ -196,10 +196,7 @@ int trace()
 			if (!policy_set[j] && 
 				strcmp(info.session_label().string(), policy_label[j]) == 0
 			    && (
-			       strcmp(info.thread_name().string(), "scalardemo") == 0 
-			    || strcmp(info.thread_name().string(), "scalarmonitor") == 0 
-			    || strcmp(info.thread_name().string(), "sensordir") == 0
-			    )
+			       strcmp(info.thread_name().string(), "taskmanager") == 0)
 			    ) {
 				try {
 					PINF("enable tracing for thread:'%s' with policy:%d",

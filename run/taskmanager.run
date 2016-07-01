@@ -6,7 +6,6 @@ set build_components {
 	core init
 	drivers/timer
 	taskmanager
-	ferret
 	lib/trace/policy/rpc_name
 }
 
@@ -44,20 +43,8 @@ append config {
 	<start name="taskmanager">
 		<resource name="RAM" quantum="30M"/>
 		<config>
-			<trace_policy label="init -> scalardemo" module="rpc_name" />
-			<trace_policy label="init -> scalarmonitor" module="rpc_name" />
-			<trace_policy label="init -> sensordir" module="rpc_name" />
+			<trace_policy label="init -> taskmanager" module="rpc_name" />
 		</config>
-	</start>
-	<start name="sensordir">
-		<resource name="RAM" quantum="30M"/>
-		<provides><service name="Sensordir"/></provides>
-	</start>
-	<start name="scalardemo">
-		<resource name="RAM" quantum="15M"/>
-	</start>
-	<start name="scalarmonitor">
-		<resource name="RAM" quantum="15M"/>
 	</start>
 </config>}
 
@@ -71,16 +58,11 @@ install_config $config
 set boot_modules {
 	core init
 	timer
-	sensordir
-	scalardemo
-	scalarmonitor
 	taskmanager
 	ld.lib.so
 	libc.lib.so
 	libm.lib.so
 	stdcxx.lib.so
-	ferret-producer.lib.so
-	ferret-consumer.lib.so
 	rpc_name
 }
 
