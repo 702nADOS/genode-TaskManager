@@ -23,30 +23,6 @@ static char const *state_name(Genode::Trace::CPU_info::State state)
 	return "undefined";
 }
 
-
-struct Test_thread : Genode::Thread<1024 * sizeof (unsigned long)>
-{
-	Timer::Connection _timer;
-
-	void entry()
-	{
-		using namespace Genode;
-
-		for (size_t i = 0; ; i++) {
-			if (i & 0x3) {
-				Ram_dataspace_capability ds_cap = env()->ram_session()->alloc(1024);
-				env()->ram_session()->free(ds_cap);
-			}
-
-			_timer.msleep(250);
-		}
-	}
-
-	Test_thread(const char *name)
-	: Thread(name) { start(); }
-};
-
-
 using namespace Genode;
 
 
@@ -118,8 +94,6 @@ int trace()
 
 	static Timer::Connection timer;
 
-	static Test_thread test("test-thread");
-
 	static Trace_buffer_monitor *test_monitor[3] = {0,0,0};
 
 	Genode::Trace::Policy_id policy_id;
@@ -189,7 +163,7 @@ int trace()
 
 			/* enable tracing */
 			
-			for(int j=0; j<policy_counter; j++) {
+			/*for(int j=0; j<policy_counter; j++) {
 
 			num_subjects = trace1.subjects(subjects, 32);
 
@@ -211,22 +185,22 @@ int trace()
 
 				policy_set[j] = true;
 			}
-			}
+			}*/
 
 			/* read events from trace buffer */
 			
-			for(int k=0; k<policy_counter; k++){
-			if (test_monitor[k]) {
-				if (subjects[i].id == test_monitor[k]->id().id)
-					test_monitor[k]->dump();
-			}
-			}
+			/*for(int k=0; k<policy_counter; k++){
+				if (test_monitor[k]) {
+					if (subjects[i].id == test_monitor[k]->id().id)
+						test_monitor[k]->dump();
+				}
+			}*/
 		}
 	}
-	for(int k=0; k<policy_counter; k++){
-	if (test_monitor[k])
-		destroy(env()->heap(), test_monitor[k]);
-	}
+	/*for(int k=0; k<policy_counter; k++){
+		if (test_monitor[k])
+			destroy(env()->heap(), test_monitor[k]);
+	}*/
 
 	printf("--- test-trace finished ---\n");
 	return 0;

@@ -6,6 +6,7 @@ set build_components {
 	core init
 	drivers/timer
 	taskmanager
+	idle
 	lib/trace/policy/rpc_name
 }
 
@@ -40,6 +41,9 @@ append config {
 		<resource name="RAM" quantum="1M"/>
 		<provides><service name="Timer"/></provides>
 	</start>
+	<start name="idle" priority="-1">
+		<resource name="RAM" quantum="1M"/>
+	</start>
 	<start name="taskmanager">
 		<resource name="RAM" quantum="30M"/>
 		<config>
@@ -59,6 +63,7 @@ set boot_modules {
 	core init
 	timer
 	taskmanager
+	idle
 	ld.lib.so
 	libc.lib.so
 	libm.lib.so
