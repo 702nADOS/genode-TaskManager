@@ -19,7 +19,7 @@ create_boot_directory
 #
 
 append config {
-<config>
+<config prio_levels="4">
 	<parent-provides>
 		<service name="ROM"/>
 		<service name="RAM"/>
@@ -41,7 +41,7 @@ append config {
 		<resource name="RAM" quantum="1M"/>
 		<provides><service name="Timer"/></provides>
 	</start>
-	<start name="idle" priority="-1">
+	<start name="idle" priority="-2">
 		<resource name="RAM" quantum="1M"/>
 	</start>
 	<start name="taskmanager">

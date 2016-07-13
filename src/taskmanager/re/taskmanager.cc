@@ -104,6 +104,16 @@ int trace()
 	char                     policy_module[64];
 	Rom_dataspace_capability policy_module_rom_ds;
 
+	Trace::CPU_info last_step[32];
+
+	Trace::Subject_id subjects[32];
+	
+	size_t last_step_num_subjects = trace1.subjects(subjects, 32);
+
+	for (size_t i = 0; i < last_step_num_subjects; i++) {
+		last_step[i] = trace1.cpu_info(subjects[i]);
+	}
+	
 	try {
 		Xml_node policy = config()->xml_node().sub_node("trace_policy");
 		for (;; policy = policy.next("trace_policy")) {
@@ -140,26 +150,42 @@ int trace()
 
 	} catch (...) { }
 
-	for (size_t cnt = 0; cnt < 5; cnt++) {
+	while(true) {
 
-		timer.msleep(3000);
+		int timestamp = 1000;
+
+		timer.msleep(timestamp);
 
 		Trace::Subject_id subjects[32];
 		size_t num_subjects = trace1.subjects(subjects, 32);
+
+		Trace::RAM_info init;
+
+		unsigned long long idle;
 
 		printf("%zd tracing subjects present\n", num_subjects);
 
 		for (size_t i = 0; i < num_subjects; i++) {
 			Trace::CPU_info info = trace1.cpu_info(subjects[i]);
 			Trace::RAM_info ram_info = trace1.ram_info(subjects[i]);
-			
-			printf("ID:%d\ttime:%lld\tlabel:%s\tname:%s\tram_quota:%d\tram_used:%d\n",
+			if(strcmp(info.session_label().string(), "init")!=0&&strcmp(info.session_label().string(), "init -> idle")!=0) {
+			printf("ID:%d %lld prio:%d %s name:%s %dKB %dKB\n",
 			       subjects[i].id,
-			       info.execution_time().value,
+			       (info.execution_time().value-last_step[i].execution_time().value)/(timestamp*10),
+				info.prio(), 
 			       info.session_label().string(),
 				info.thread_name().string(),
-				ram_info.ram_quota(),
-				ram_info.ram_used());
+				ram_info.ram_quota()/1024,
+				ram_info.ram_used()/1024);
+			}
+			if(strcmp(info.session_label().string(), "init")==0) {
+				init=ram_info;
+			}
+			if(strcmp(info.thread_name().string(), "idle")==0) {
+				idle=100-((info.execution_time().value-last_step[i].execution_time().value)/(timestamp*10));
+			}
+
+			last_step[i]=info;
 
 			/* enable tracing */
 			
@@ -196,6 +222,8 @@ int trace()
 				}
 			}*/
 		}
+
+		printf("Load:%lld RAM avail:%dMB\n", idle, init.ram_quota()/1048576);
 	}
 	/*for(int k=0; k<policy_counter; k++){
 		if (test_monitor[k])
